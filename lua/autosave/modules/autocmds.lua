@@ -36,9 +36,9 @@ local function actual_save()
 		local last_char_pos = fn.getpos("']")
 
 		if opts["write_all_buffers"] then
-			cmd("silent! wall")
+			cmd("silent! noa wall")
 		else
-			cmd("silent! write")
+			cmd("silent! noa write")
 		end
 
 		fn.setpos("'[", first_char_pos)
@@ -140,9 +140,15 @@ function M.do_save()
 end
 
 function M.save()
+    vim.g.auto_save_abort = false
+
 	if autosave.hook_before_saving ~= nil then
 		autosave.hook_before_saving()
 	end
+
+    if vim.g.auto_save_abort then
+        return
+    end
 
 	M.do_save()
 
